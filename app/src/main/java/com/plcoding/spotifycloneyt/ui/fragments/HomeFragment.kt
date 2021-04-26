@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.plcoding.spotifycloneyt.R
 import com.plcoding.spotifycloneyt.adapters.SongAdapter
-import com.plcoding.spotifycloneyt.data.other.Status
+import com.plcoding.spotifycloneyt.data.other.Status.SUCCESS
+import com.plcoding.spotifycloneyt.data.other.Status.ERROR
+import com.plcoding.spotifycloneyt.data.other.Status.LOADING
 import com.plcoding.spotifycloneyt.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -28,7 +30,7 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         setupRecyclerView()
         subscribeToObservers()
 
-        songAdapter.setOnItemClickListener {
+        songAdapter.setItemClickListener {
             mainViewModel.playOrToggleSong(it)
         }
     }
@@ -41,14 +43,14 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
     private fun subscribeToObservers() {
         mainViewModel.mediaItems.observe(viewLifecycleOwner){result ->
             when(result.status){
-                Status.SUCCESS -> {
+                SUCCESS -> {
                     allSongsProgressBar.isVisible = false
                     result.data?.let{ songs ->
                         songAdapter.songs = songs
                     }
                 }
-                Status.ERROR -> Unit
-                Status.LOADING -> allSongsProgressBar.isVisible = true
+                ERROR -> Unit
+                LOADING -> allSongsProgressBar.isVisible = true
             }
         }
     }
